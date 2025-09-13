@@ -1,9 +1,5 @@
 ## TODO
 
-### Add/bugfix remaining endpoints
-- `PUT /person/{name}` is missing
-    - what updating a person this mean?
-
 ### Add logging
 - add logging everywhere
 
@@ -32,3 +28,6 @@
 
 - `POST /astronautDuty` needs to a update person's careerDates and the most recent duty's enddate
     - this already works
+
+- `PUT /person/{name}` is missing
+    - implemented. just allows updating a person's name

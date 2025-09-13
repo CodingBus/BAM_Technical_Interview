@@ -20,6 +20,7 @@ builder.Services.AddMediatR(cfg =>
     cfg.AddRequestPostProcessor<CreateAstronautDutyPostProcessor>();
     cfg.AddRequestPreProcessor<CreatePersonPreProcessor>();
     cfg.AddRequestPreProcessor<GetPersonByNamePreProcessor>();
+    cfg.AddRequestPreProcessor<UpdatePersonPreProcessor>();
     cfg.RegisterServicesFromAssemblies(typeof(Program).Assembly);
 });
 

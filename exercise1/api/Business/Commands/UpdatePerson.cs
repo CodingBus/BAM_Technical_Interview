@@ -21,7 +21,9 @@ namespace StargateAPI.Business.Commands
         }
         public async Task Process(UpdatePerson request, CancellationToken cancellationToken)
         {
-            
+            var person = await _context.People.AsNoTracking().AnyAsync(z => z.Name == request.Name, cancellationToken);
+
+            if (!person) throw new BadHttpRequestException($"A person with the name '{request.Name}' does not exist.");
         }
     }
 
@@ -36,11 +38,21 @@ namespace StargateAPI.Business.Commands
 
         public async Task<UpdatePersonResult> Handle(UpdatePerson request, CancellationToken cancellationToken)
         {
-                return new UpdatePersonResult()
-                {
-                    Id = 0
-                };
-          
+            var person = await _context.People.FirstOrDefaultAsync(p => p.Name == request.Name, cancellationToken);
+            if (person == null) throw new BadHttpRequestException($"Person with name '{request.Name}' does not exist."); // This should not happen due to preprocessor
+
+            // check new name not taken
+            var newNameTaken = await _context.People.AnyAsync(p => p.Name == request.NewName && p.Id != person.Id, cancellationToken);
+            if (newNameTaken)throw new BadHttpRequestException($"A person with the name '{request.NewName}' already exists.");
+
+            person.Name = request.NewName;
+
+            await _context.SaveChangesAsync(cancellationToken);
+
+            return new UpdatePersonResult()
+            {
+                Id = person.Id
+            };
         }
     }
 
