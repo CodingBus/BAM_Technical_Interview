@@ -25,8 +25,16 @@ namespace StargateAPI.Business.Commands
         {
             var person = await _context.People.AsNoTracking().AnyAsync(z => z.Name == request.Name, cancellationToken);
 
-            _logger.LogWarning($"Person with name '{request.Name}' already exists: {person}");
-            if (person) throw new BadHttpRequestException($"A person with the name '{request.Name}' already exists.");
+            if (person)
+            {
+                var existsMessage = $"A person with the name '{request.Name}' already exists.";
+
+                _logger.LogWarning(existsMessage);
+
+                await _context.LogToDatabaseAsync(nameof(CreatePersonPreProcessor), LogLevel.Warning, existsMessage);
+
+                throw new BadHttpRequestException(existsMessage);
+            }
         }
     }
 
@@ -42,22 +50,33 @@ namespace StargateAPI.Business.Commands
         }
         public async Task<CreatePersonResult> Handle(CreatePerson request, CancellationToken cancellationToken)
         {
+            {
+                var startMessage = $"Starting creation of new person with Name '{request.Name}'";
+                _logger.LogInformation(startMessage);
+                await _context.LogToDatabaseAsync(nameof(CreatePersonHandler), LogLevel.Information, startMessage);
+            }
 
-                var newPerson = new Person()
-                {
-                   Name = request.Name
-                };
+            var newPerson = new Person()
+            {
+                Name = request.Name
+            };
 
-                await _context.People.AddAsync(newPerson);
+            await _context.People.AddAsync(newPerson);
 
-                await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
 
-                _logger.LogInformation($"Created new person with ID {newPerson.Id} and Name '{newPerson.Name}'");
+            {
+                var creationMessage = $"Created new person with ID {newPerson.Id} and Name '{newPerson.Name}'";
 
-                return new CreatePersonResult()
-                {
-                    Id = newPerson.Id
-                };
+                _logger.LogInformation(creationMessage);
+
+                await _context.LogToDatabaseAsync(nameof(CreatePersonHandler), LogLevel.Information, creationMessage);
+            }
+
+            return new CreatePersonResult()
+            {
+                Id = newPerson.Id
+            };
           
         }
     }

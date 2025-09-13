@@ -1,8 +1,6 @@
 ## TODO
 
 ### Add logging
-- add logging everywhere
-
 - store log information
 
 ### Test coverage
@@ -10,6 +8,8 @@
 
 
 ## DONE
+
+## Endpoints
 - `POST /person` doesn't enforce unique names (gonna keep names as PK's cuz it's in the rules)
 
 - Asronaut dutyTitles and ranks should come from an enum table
@@ -31,3 +31,6 @@
 
 - `PUT /person/{name}` is missing
     - implemented. just allows updating a person's name
+
+### Add logging
+- add logging everywhere

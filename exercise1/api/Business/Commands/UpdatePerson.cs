@@ -25,8 +25,17 @@ namespace StargateAPI.Business.Commands
         public async Task Process(UpdatePerson request, CancellationToken cancellationToken)
         {
             var person = await _context.People.AsNoTracking().AnyAsync(z => z.Name == request.Name, cancellationToken);
-            _logger.LogWarning($"A person with the name '{request.Name}' does not exist.");
-            if (!person) throw new BadHttpRequestException($"A person with the name '{request.Name}' does not exist.");
+            
+            if (!person)
+            {
+                var nameNotFoundMessage = $"A person with the name '{request.Name}' does not exist.";
+
+                _logger.LogWarning(nameNotFoundMessage);
+
+                await _context.LogToDatabaseAsync(nameof(UpdatePersonPreProcessor), LogLevel.Warning, nameNotFoundMessage);
+
+                throw new BadHttpRequestException(nameNotFoundMessage);
+            }
         }
     }
 
@@ -43,22 +52,50 @@ namespace StargateAPI.Business.Commands
 
         public async Task<UpdatePersonResult> Handle(UpdatePerson request, CancellationToken cancellationToken)
         {
-            _logger.LogInformation($"Updating person with Name '{request.Name}' to new Name '{request.NewName}'");
+            {
+                var updateMessage = $"Updating person with Name '{request.Name}' to new Name '{request.NewName}'";
+                _logger.LogInformation($"Updating person with Name '{request.Name}' to new Name '{request.NewName}'");
+                await _context.LogToDatabaseAsync(nameof(UpdatePersonHandler), LogLevel.Information, updateMessage);
+            }
 
             var person = await _context.People.FirstOrDefaultAsync(p => p.Name == request.Name, cancellationToken);
-            _logger.LogWarning($"Person with name '{request.Name}' does not exist.");
-            if (person == null) throw new BadHttpRequestException($"Person with name '{request.Name}' does not exist."); // This should not happen due to preprocessor
+           
+            if (person == null)
+            {
+                var personNotFoundMessage = $"Person with name '{request.Name}' does not exist.";
+
+                _logger.LogWarning(personNotFoundMessage);
+
+                await _context.LogToDatabaseAsync(nameof(UpdatePersonHandler), LogLevel.Warning, personNotFoundMessage);
+
+                throw new BadHttpRequestException($"Person with name '{request.Name}' does not exist.");
+            }
 
             // check new name not taken
             var newNameTaken = await _context.People.AnyAsync(p => p.Name == request.NewName && p.Id != person.Id, cancellationToken);
-            _logger.LogWarning($"A person with the name '{request.NewName}' already exists.");
-            if (newNameTaken)throw new BadHttpRequestException($"A person with the name '{request.NewName}' already exists.");
+
+            
+            if (newNameTaken)
+            {
+                var newNameCollisionMessage = $"A person with the name '{request.NewName}' already exists.";
+
+                _logger.LogWarning(newNameCollisionMessage);
+
+                await _context.LogToDatabaseAsync(nameof(UpdatePersonHandler), LogLevel.Warning, newNameCollisionMessage);
+
+                throw new BadHttpRequestException(newNameCollisionMessage);
+            }
 
             person.Name = request.NewName;
 
             await _context.SaveChangesAsync(cancellationToken);
 
-            _logger.LogInformation($"Updated person ID {person.Id} to new Name '{person.Name}'");
+            {
+                var updateSuccessMessage = $"Updated person ID {person.Id} to new Name '{person.Name}'";
+                _logger.LogInformation(updateSuccessMessage);
+                await _context.LogToDatabaseAsync(nameof(UpdatePersonHandler), LogLevel.Information, updateSuccessMessage);
+            }
+
             return new UpdatePersonResult()
             {
                 Id = person.Id
