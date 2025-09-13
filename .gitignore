@@ -364,3 +364,4 @@ FodyWeavers.xsd
 /exercise1/api/starbase.db
 /exercise1/api/starbase.db-shm
 /exercise1/api/starbase.db-wal
+/user-interface/.vscode
