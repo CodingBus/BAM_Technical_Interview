@@ -13,9 +13,9 @@ export class MainPage implements OnInit{
   public ngOnInit(): void {
     console.log("oninit");
 
-    this.personService.getPersonByName('derek').subscribe({
+    this.personService.updatePerson("devin", "devin2").subscribe({
       next: (result: Person) => {
-        console.log('Created person:', result);
+        console.log('Updated person:', result);
       },
       error: (err) => {
         console.error('Error creating person:', err);
