@@ -1,3 +1,4 @@
+## TODO
 - `POST /person` doesn't enforce unique names (gonna keep names as PK's cuz it's in the rules)
 
 - `GET /person` and `GET /person/{name}` just returns a list the string names without their employment history
@@ -19,3 +20,5 @@
 - store log information
 
 
+## DONE
+- `POST /person` doesn't enforce unique names (gonna keep names as PK's cuz it's in the rules)
