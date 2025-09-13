@@ -1,17 +1,24 @@
 ## TODO
-- `GET /person` and `GET /person/{name}` just returns a list the string names without their employment history
 
+### Add/bugfix remaining endpoints
 - `PUT /person/{name}` is missing
+    - what updating a person mean?
 
-- `GET /AstronautDuty` is probably intended to return a person's latest duty and probably doesn't do that 
+- add `GET /Career` to retrieve a person's AstronautDetails
+
+- `GET /AstronautDuty` should return a person's current duty.. if one exists instead of their astronaut details
+
+- `GET /person` and `GET /person/{name}` just returns a list the string names without their employment history
 
 - `POST /astronautDuty` needs date checking and to update person's careerDates and the most recent duty's enddate
 
-- Astronaut Detail's role needs to be sorted out
-
+### Add logging
 - add logging everywhere
 
 - store log information
+
+### Test coverage
+
 
 
 ## DONE
