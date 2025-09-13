@@ -11,19 +11,21 @@ namespace StargateAPI.Tests
     {
         private StargateContext GetInMemoryContext()
         {
+            // Use a unique in-memory database for each test
             var options = new DbContextOptionsBuilder<StargateContext>()
-                .UseInMemoryDatabase(databaseName: "TestDatabase")
+                .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
                 .Options;
 
             return new StargateContext(options);
         }
+
+        // Seed a person to test duplicate name prevention
 
         [Fact]
         public async Task PreProcessor_ShouldPreventDuplicateNames()
         {
             var context = GetInMemoryContext();
 
-            // Seed a person
             context.People.Add(new Person { Name = "John Doe" });
             await context.SaveChangesAsync();
 
@@ -32,7 +34,7 @@ namespace StargateAPI.Tests
 
             var request = new CreatePerson
             {
-                Name = "John Doe" // Duplicate name
+                Name = "John Doe"
             };
 
             await Assert.ThrowsAsync<BadHttpRequestException>(async () =>
@@ -40,6 +42,8 @@ namespace StargateAPI.Tests
                 await preProcessor.Process(request, CancellationToken.None);
             });
         }
+
+        // Test that a person is created successfully
 
         [Fact]
         public async Task Handle_ShouldCreatePerson()
@@ -60,6 +64,8 @@ namespace StargateAPI.Tests
             Assert.NotNull(createdPerson);
             Assert.Equal("Devin Perez", createdPerson.Name);
         }
+
+        // Test that a log entry is created when a person is created
 
         [Fact]       
         public async Task Handle_ShouldLogCreation()
