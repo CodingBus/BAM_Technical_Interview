@@ -12,6 +12,6 @@
 
 - `POST /astronautDuty` needs date checking and to update person's careerDates and the most recent duty's enddate
 
-- 
+- Astronaut Detail's role needs to be sorted out
 
 

@@ -11,7 +11,8 @@ namespace StargateAPI.Business.Data
 
         public int PersonId { get; set; }
 
-        public string Rank { get; set; } = string.Empty;
+        public int RankId { get; set; }
+        public virtual Rank Rank { get; set; }
 
         public string DutyTitle { get; set; } = string.Empty;
 
@@ -28,6 +29,11 @@ namespace StargateAPI.Business.Data
         {
             builder.HasKey(x => x.Id);
             builder.Property(x => x.Id).ValueGeneratedOnAdd();
+
+            builder.HasOne(x => x.Rank)
+               .WithMany() 
+               .HasForeignKey(x => x.RankId)
+               .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }
