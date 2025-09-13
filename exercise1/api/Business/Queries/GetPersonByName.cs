@@ -1,5 +1,6 @@
 ﻿using Dapper;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using StargateAPI.Business.Data;
 using StargateAPI.Business.Dtos;
 using StargateAPI.Controllers;
@@ -23,11 +24,26 @@ namespace StargateAPI.Business.Queries
         {
             var result = new GetPersonByNameResult();
 
-            var query = $"SELECT a.Id as PersonId, a.Name, r.Name as CurrentRank, d.Name as CurrentDutyTitle, b.CareerStartDate, b.CareerEndDate FROM [Person] a LEFT JOIN [AstronautDetail] b on b.PersonId = a.Id LEFT JOIN [Rank] r on r.Id = b.CurrentRankId LEFT JOIN [DutyTitle] d on d.Id = b.CurrentDutyTitleId WHERE '{request.Name}' = a.Name";
+            var person = await _context.People
+                .Where(p => p.Name == request.Name)
+                .Include(p => p.AstronautDetail)
+                    .ThenInclude(d => d != null ? d.CurrentRank : null)
+                .Include(p => p.AstronautDetail)
+                    .ThenInclude(d => d != null ? d.CurrentDutyTitle : null)
+                .Include(p => p.AstronautDuties)
+                .Select(p => new PersonAstronaut
+                {
+                    PersonId = p.Id,
+                    Name = p.Name,
+                    CurrentRank = p.AstronautDetail != null ? p.AstronautDetail.CurrentRank.Name : string.Empty,
+                    CurrentDutyTitle = p.AstronautDetail != null ? p.AstronautDetail.CurrentDutyTitle.Name : string.Empty,
+                    CareerStartDate = p.AstronautDetail != null ? p.AstronautDetail.CareerStartDate : (DateTime?)null,
+                    CareerEndDate = p.AstronautDetail != null ? p.AstronautDetail.CareerEndDate : (DateTime?)null,
+                    AstronautDuties = p.AstronautDuties.OrderByDescending(d => d.DutyStartDate).ToList()
+                })
+                .FirstOrDefaultAsync(cancellationToken);
 
-            var person = await _context.Connection.QueryAsync<PersonAstronaut>(query);
-
-            result.Person = person.FirstOrDefault();
+            result.Person = person;
 
             return result;
         }

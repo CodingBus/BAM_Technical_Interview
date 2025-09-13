@@ -1,4 +1,6 @@
-﻿namespace StargateAPI.Business.Dtos
+﻿using StargateAPI.Business.Data;
+
+namespace StargateAPI.Business.Dtos
 {
     public class PersonAstronaut
     {
@@ -14,6 +16,6 @@
 
         public DateTime? CareerEndDate { get; set; }
 
-
+        public ICollection<AstronautDuty> AstronautDuties { get; set; } = new HashSet<AstronautDuty>();
     }
 }
