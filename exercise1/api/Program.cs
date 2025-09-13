@@ -5,6 +5,18 @@ using StargateAPI.Business.Queries;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Configure CORS to allow requests from Angular development server
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAngularDev", policy =>
+    {
+        policy
+            .WithOrigins("http://localhost:4200") // Angular dev server
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
+
 // Add services to the container.
 
 builder.Services.AddControllers();
@@ -32,6 +44,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseCors("AllowAngularDev");
 
 app.UseHttpsRedirection();
 
