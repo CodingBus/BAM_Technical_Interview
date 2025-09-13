@@ -28,17 +28,23 @@ namespace StargateAPI.Business.Commands
             _context = context;
         }
 
-        public Task Process(CreateAstronautDuty request, CancellationToken cancellationToken)
+        public async Task Process(CreateAstronautDuty request, CancellationToken cancellationToken)
         {
-            var person = _context.People.AsNoTracking().FirstOrDefault(z => z.Name == request.Name);
+            var person = await _context.People.AsNoTracking().AnyAsync(z => z.Name == request.Name);
 
-            if (person is null) throw new BadHttpRequestException("Bad Request");
+            if (!person) throw new BadHttpRequestException($"A person with the name '{request.Name}' does not exist.");
 
             var verifyNoPreviousDuty = _context.AstronautDuties.FirstOrDefault(z => z.DutyTitleId == (int)request.DutyTitle && z.DutyStartDate == request.DutyStartDate);
 
             if (verifyNoPreviousDuty is not null) throw new BadHttpRequestException("Bad Request");
 
-            return Task.CompletedTask;
+            var verifyRank = Enum.IsDefined(typeof(RankEnum), request.Rank);
+
+            if (!verifyRank) throw new BadHttpRequestException($"The rank '{request.Rank}' is not valid.");
+
+            var verifyDutyTitle = Enum.IsDefined(typeof(DutyTitleEnum), request.DutyTitle);
+
+            if (!verifyDutyTitle) throw new BadHttpRequestException($"The duty title '{request.DutyTitle}' is not valid.");
         }
     }
 
