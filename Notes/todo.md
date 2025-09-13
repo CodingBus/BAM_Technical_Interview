@@ -1,14 +1,8 @@
 ## TODO
 
-
-
-### Test coverage
-
-
-
 ## DONE
 
-## Endpoints
+### Endpoints
 - `POST /person` doesn't enforce unique names (gonna keep names as PK's cuz it's in the rules)
 
 - Asronaut dutyTitles and ranks should come from an enum table
@@ -35,3 +29,7 @@
 - added logging to mediatr processeses
 
 - store log information
+
+### Test coverage
+- added example inmemory tests
+- added example mocked controller tests
