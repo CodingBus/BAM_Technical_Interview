@@ -1,7 +1,6 @@
 ## TODO
 
-### Add logging
-- store log information
+
 
 ### Test coverage
 
@@ -33,4 +32,6 @@
     - implemented. just allows updating a person's name
 
 ### Add logging
-- add logging everywhere
+- added logging to mediatr processeses
+
+- store log information
