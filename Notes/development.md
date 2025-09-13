@@ -27,3 +27,26 @@
 6. Run the migrations and examine the initial table structure
 - Install SQLite/SQL Server Compact Toolbox Extension 
 - Examine the InitialCreate migration
+- Create enum tables for duty rank and title
+
+7. Add logging
+
+8. Manual testing and bugfixing
+- Basic functionality:
+  - Retrieve a person by name.
+    - ` GET /Person/{name}`
+  - Retrieve all people.
+    - `GET /Person`
+  - Add/update a person by name.
+    - What is a person other than name? Associated astronaut records?
+    - `PUT /Person`
+  - Retrieve Astronaut Duty by name.
+    - `GET /AstronautDuty/{name}`
+  - Add an Astronaut Duty.
+    - `POST /AstronautDuty`
+9. Unit tests
+  - XUnit?
+
+10. UI
+- Angular
+- Angular Material Component Library
