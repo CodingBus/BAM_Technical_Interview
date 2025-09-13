@@ -19,6 +19,10 @@ namespace StargateAPI.Business.Data
         {
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(StargateContext).Assembly);
 
+            modelBuilder.Entity<Person>()
+                .HasIndex(p => p.Name)
+                .IsUnique();
+
             base.OnModelCreating(modelBuilder);
         }
     }
