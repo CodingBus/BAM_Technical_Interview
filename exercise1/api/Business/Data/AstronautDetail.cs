@@ -14,7 +14,8 @@ namespace StargateAPI.Business.Data
         public int CurrentRankId { get; set; }
         public virtual Rank CurrentRank { get; set; }
 
-        public string CurrentDutyTitle { get; set; } = string.Empty;
+        public int CurrentDutyTitleId { get; set; }
+        public virtual DutyTitle CurrentDutyTitle { get; set; }
 
         public DateTime CareerStartDate { get; set; }
 
@@ -34,6 +35,11 @@ namespace StargateAPI.Business.Data
                .WithMany()
                .HasForeignKey(x => x.CurrentRankId)
                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.HasOne(x => x.CurrentDutyTitle)
+                .WithMany()
+                .HasForeignKey(x => x.CurrentDutyTitleId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

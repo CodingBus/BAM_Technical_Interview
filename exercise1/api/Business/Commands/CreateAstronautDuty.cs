@@ -14,7 +14,7 @@ namespace StargateAPI.Business.Commands
 
         public required RankEnum Rank { get; set; }
 
-        public required string DutyTitle { get; set; }
+        public required DutyTitleEnum DutyTitle { get; set; }
 
         public DateTime DutyStartDate { get; set; }
     }
@@ -34,7 +34,7 @@ namespace StargateAPI.Business.Commands
 
             if (person is null) throw new BadHttpRequestException("Bad Request");
 
-            var verifyNoPreviousDuty = _context.AstronautDuties.FirstOrDefault(z => z.DutyTitle == request.DutyTitle && z.DutyStartDate == request.DutyStartDate);
+            var verifyNoPreviousDuty = _context.AstronautDuties.FirstOrDefault(z => z.DutyTitleId == (int)request.DutyTitle && z.DutyStartDate == request.DutyStartDate);
 
             if (verifyNoPreviousDuty is not null) throw new BadHttpRequestException("Bad Request");
 
@@ -85,10 +85,10 @@ namespace StargateAPI.Business.Commands
             {
                 astronautDetail = new AstronautDetail();
                 astronautDetail.PersonId = person.Id;
-                astronautDetail.CurrentDutyTitle = request.DutyTitle;
+                astronautDetail.CurrentDutyTitleId = (int)request.DutyTitle;
                 astronautDetail.CurrentRankId = (int)request.Rank;
                 astronautDetail.CareerStartDate = request.DutyStartDate.Date;
-                if (request.DutyTitle == "RETIRED")
+                if (request.DutyTitle == DutyTitleEnum.Retired)
                 {
                     astronautDetail.CareerEndDate = request.DutyStartDate.Date;
                 }
@@ -98,9 +98,9 @@ namespace StargateAPI.Business.Commands
             }
             else
             {
-                astronautDetail.CurrentDutyTitle = request.DutyTitle;
+                astronautDetail.CurrentDutyTitleId = (int)request.DutyTitle;
                 astronautDetail.CurrentRankId = (int)request.Rank;
-                if (request.DutyTitle == "RETIRED")
+                if (request.DutyTitle == DutyTitleEnum.Retired)
                 {
                     astronautDetail.CareerEndDate = request.DutyStartDate.AddDays(-1).Date;
                 }
@@ -121,7 +121,7 @@ namespace StargateAPI.Business.Commands
             {
                 PersonId = person.Id,
                 RankId = (int)request.Rank,
-                DutyTitle = request.DutyTitle,
+                DutyTitleId = (int)request.DutyTitle,
                 DutyStartDate = request.DutyStartDate.Date,
                 DutyEndDate = null
             };

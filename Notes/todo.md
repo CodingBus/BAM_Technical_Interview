@@ -14,4 +14,8 @@
 
 - Astronaut Detail's role needs to be sorted out
 
+- add logging everywhere
+
+- store log information
+
 
