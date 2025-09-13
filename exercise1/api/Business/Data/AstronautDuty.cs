@@ -9,7 +9,7 @@ namespace StargateAPI.Business.Data
     {
         public int Id { get; set; }
 
-        public int PersonId { get; set; }
+        public int? PersonId { get; set; }
 
         public int RankId { get; set; }
         public virtual Rank Rank { get; set; }
@@ -21,7 +21,7 @@ namespace StargateAPI.Business.Data
 
         public DateTime? DutyEndDate { get; set; }
 
-        public virtual Person Person { get; set; }
+        public virtual Person? Person { get; set; }
     }
 
     public class AstronautDutyConfiguration : IEntityTypeConfiguration<AstronautDuty>
@@ -40,6 +40,12 @@ namespace StargateAPI.Business.Data
                 .WithMany() 
                 .HasForeignKey(x => x.DutyTitleId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            builder.HasOne(x => x.Person)
+                .WithMany(p => p.AstronautDuties)
+                .HasForeignKey(x => x.PersonId)
+                .OnDelete(DeleteBehavior.Restrict)
+                .IsRequired(false); // got stuck trying to coax EF into not generating an AD on CreatePerson
         }
     }
 }

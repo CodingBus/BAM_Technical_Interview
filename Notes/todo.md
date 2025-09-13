@@ -4,10 +4,6 @@
 - `PUT /person/{name}` is missing
     - what updating a person this mean?
 
-- `POST /astronautDuty` needs date checking and to update person's careerDates and the most recent duty's enddate
-
-- swap insane queries for LINQ
-
 ### Add logging
 - add logging everywhere
 
@@ -31,3 +27,8 @@
     - misconception. AstronautDetails is correct and the collections live in Person objects
 
 - `GET /person` and `GET /person/{name}` just returns a list the string names without their employment history
+
+- swap insane queries for LINQ
+
+- `POST /astronautDuty` needs to a update person's careerDates and the most recent duty's enddate
+    - this already works

@@ -1,5 +1,6 @@
 ﻿using Dapper;
 using MediatR;
+using MediatR.Pipeline;
 using Microsoft.EntityFrameworkCore;
 using StargateAPI.Business.Data;
 using StargateAPI.Business.Dtos;
@@ -10,6 +11,33 @@ namespace StargateAPI.Business.Queries
     public class GetPersonByName : IRequest<GetPersonByNameResult>
     {
         public required string Name { get; set; } = string.Empty;
+    }
+
+    public class GetPersonByNamePreProcessor : IRequestPreProcessor<GetPersonByName>
+    {
+        private readonly StargateContext _context;
+
+        public GetPersonByNamePreProcessor(StargateContext context)
+        {
+            _context = context;
+        }
+
+        public async Task Process(GetPersonByName request, CancellationToken cancellationToken)
+        {
+            var personExists = await _context.People.AsNoTracking().AnyAsync(p => p.Name == request.Name, cancellationToken);
+
+            if (!personExists)
+            {
+                throw new BadHttpRequestException($"No person found with name '{request.Name}'");
+            }
+
+            var hasDuties = await _context.AstronautDuties.AsNoTracking().AnyAsync(d => d.Person!.Name == request.Name, cancellationToken);
+
+            if (!hasDuties)
+            {
+                throw new BadHttpRequestException($"'{request.Name}' has no astronaut duties");
+            }
+        }
     }
 
     public class GetPersonByNameHandler : IRequestHandler<GetPersonByName, GetPersonByNameResult>
