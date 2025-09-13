@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using StargateAPI.Business.Data;
 using StargateAPI.Controllers;
 using System.Net;
+using Microsoft.Extensions.Logging;
 
 namespace StargateAPI.Business.Commands
 {
@@ -22,28 +23,30 @@ namespace StargateAPI.Business.Commands
     public class CreateAstronautDutyPreProcessor : IRequestPreProcessor<CreateAstronautDuty>
     {
         private readonly StargateContext _context;
+        private readonly ILogger<CreateAstronautDutyPreProcessor> _logger;
 
-        public CreateAstronautDutyPreProcessor(StargateContext context)
+        public CreateAstronautDutyPreProcessor(StargateContext context, ILogger<CreateAstronautDutyPreProcessor> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         public async Task Process(CreateAstronautDuty request, CancellationToken cancellationToken)
         {
             var person = await _context.People.AsNoTracking().AnyAsync(z => z.Name == request.Name);
-
+            _logger.LogWarning($"A person with the name '{request.Name}' does not exist.");
             if (!person) throw new BadHttpRequestException($"A person with the name '{request.Name}' does not exist.");
 
             var verifyNoPreviousDuty = _context.AstronautDuties.FirstOrDefault(z => z.DutyTitleId == (int)request.DutyTitle && z.DutyStartDate == request.DutyStartDate);
-
-            if (verifyNoPreviousDuty is not null) throw new BadHttpRequestException("Bad Request");
+            _logger.LogWarning($"Previous duty detected for PersonId: '{verifyNoPreviousDuty?.PersonId}'");
+            if (verifyNoPreviousDuty is not null) throw new BadHttpRequestException($"Previous duty detected for PersonId: '{verifyNoPreviousDuty.PersonId}'");
 
             var verifyRank = Enum.IsDefined(typeof(RankEnum), request.Rank);
-
+            _logger.LogWarning($"The rank '{request.Rank}' is not valid.");
             if (!verifyRank) throw new BadHttpRequestException($"The rank '{request.Rank}' is not valid.");
 
             var verifyDutyTitle = Enum.IsDefined(typeof(DutyTitleEnum), request.DutyTitle);
-
+            _logger.LogWarning($"The duty title '{request.DutyTitle}' is not valid.");
             if (!verifyDutyTitle) throw new BadHttpRequestException($"The duty title '{request.DutyTitle}' is not valid.");
         }
     }
@@ -71,13 +74,16 @@ namespace StargateAPI.Business.Commands
     public class CreateAstronautDutyHandler : IRequestHandler<CreateAstronautDuty, CreateAstronautDutyResult>
     {
         private readonly StargateContext _context;
+        private readonly ILogger<CreateAstronautDutyHandler> _logger;
 
-        public CreateAstronautDutyHandler(StargateContext context)
+        public CreateAstronautDutyHandler(StargateContext context, ILogger<CreateAstronautDutyHandler> logger)
         {
             _context = context;
+            _logger = logger;
         }
         public async Task<CreateAstronautDutyResult> Handle(CreateAstronautDuty request, CancellationToken cancellationToken)
         {
+            _logger.LogInformation($"Creating new AstronautDuty for '{request.Name}' with Rank '{request.Rank}' and DutyTitle '{request.DutyTitle}' starting on '{request.DutyStartDate}'");
 
             var query = $"SELECT * FROM [Person] WHERE \'{request.Name}\' = Name";
 
@@ -135,6 +141,8 @@ namespace StargateAPI.Business.Commands
             await _context.AstronautDuties.AddAsync(newAstronautDuty);
 
             await _context.SaveChangesAsync();
+
+            _logger.LogInformation($"Created new AstronautDuty with ID {newAstronautDuty.Id} for PersonId '{newAstronautDuty.PersonId}'");
 
             return new CreateAstronautDutyResult()
             {
