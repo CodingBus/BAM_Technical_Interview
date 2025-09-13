@@ -24,4 +24,6 @@
   - handler
   - postprocessor
 
-6. Seed a database
+6. Run the migrations and examine the initial table structure
+- Install SQLite/SQL Server Compact Toolbox Extension 
+- Examine the InitialCreate migration
