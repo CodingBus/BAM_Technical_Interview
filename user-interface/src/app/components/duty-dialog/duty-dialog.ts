@@ -47,20 +47,25 @@ import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE, MAT_NATIVE_DATE_FORMATS
   styleUrl: './duty-dialog.scss'
 })
 export class DutyDialog implements OnInit, AfterViewInit {
+  astronautDuties = new Array<AstronautDuty>();
   displayedColumns = ['rank', 'dutyTitle', 'dutyStartDate', 'dutyEndDate'];
   dataSource = new MatTableDataSource<AstronautDuty>();
   dutyForm!: FormGroup;
 
+  getEnumName = getEnumName;
+  RankEnum = RankEnum;
+  DutyTitleEnum = DutyTitleEnum;
 
-  ranks = ['Commander', 'Pilot', 'Engineer']; // placeholder
-  dutyTitles = ['Maintenance', 'Research', 'Navigation']; // placeholder
+
+  ranks = Object.values(RankEnum).filter(v => typeof v === 'number') as RankEnum[];
+  dutyTitles = Object.values(DutyTitleEnum).filter(v => typeof v === 'number') as DutyTitleEnum[];
 
   constructor(private fb: FormBuilder, private dialogRef: MatDialogRef<DutyDialog>, @Inject(MAT_DIALOG_DATA) public data: { person: Person }) { }
 
   ngOnInit(): void {
     this.dutyForm = this.fb.group({
-      rank: ['', Validators.required],
-      dutyTitle: ['', Validators.required],
+      rank: [ RankEnum, Validators.required],
+      dutyTitle: [DutyTitleEnum, Validators.required],
       dutyStartDate: ['', Validators.required]
     });
 
@@ -74,10 +79,15 @@ export class DutyDialog implements OnInit, AfterViewInit {
 
   onAddDuty(): void {
     if (this.dutyForm.valid) {
-      const newDuty = this.dutyForm.value;
-      console.log('Adding duty:', newDuty);
+      const astronautDuty = new AstronautDuty();
+      astronautDuty.name = this.data.person.name;
+      astronautDuty.rank = getEnumName(RankEnum, this.dutyForm.value.rank);
+      astronautDuty.dutyTitle = getEnumName(DutyTitleEnum, this.dutyForm.value.dutyTitle);
+      astronautDuty.dutyStartDate = this.dutyForm.value.dutyStartDate;
 
-      this.dataSource.data = [...this.dataSource.data, newDuty as AstronautDuty];
+      this.dataSource.data = [...this.dataSource.data, astronautDuty];
+
+      this.astronautDuties.push(astronautDuty);
 
       this.dutyForm.reset();
     }
@@ -85,11 +95,11 @@ export class DutyDialog implements OnInit, AfterViewInit {
 
 
   onCancel(): void {
-    this.dialogRef.close("cancel");
+    this.dialogRef.close({status: "cancel", newDuties: []});
   }
 
   onConfirm(): void {
-    this.dialogRef.close("save");
+    this.dialogRef.close({status: "save", newDuties: this.astronautDuties});
   }
 
   mapPersonToDisplay(person: Person): AstronautDuty[] {

@@ -84,10 +84,11 @@ export class PersonTable implements OnInit, AfterViewInit {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      if (result == "save") {
+      if (result.status == "save") {
         console.log("refreshing table...");
         this.personService.getAllPeople().subscribe({
           next: (result: any) => {
+            console.log("new duties", result.newDuties);
             this.dataSource.data = result.people;
           },
           error: (err) => console.error('Error fetching people:', err)

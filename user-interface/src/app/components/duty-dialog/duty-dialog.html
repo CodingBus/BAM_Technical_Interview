@@ -31,22 +31,22 @@
 <h3>Add New Astronaut Duty</h3>
 <form [formGroup]="dutyForm" (ngSubmit)="onAddDuty()">
   <mat-form-field appearance="fill" class="form-field">
-    <mat-label>Rank</mat-label>
-    <mat-select formControlName="rank" required>
-      <mat-option *ngFor="let rank of ranks" [value]="rank">
-        {{ rank }}
-      </mat-option>
-    </mat-select>
-  </mat-form-field>
+  <mat-label>Rank</mat-label>
+  <mat-select formControlName="rank" required>
+    <mat-option *ngFor="let rank of ranks" [value]="rank">
+      {{ getEnumName(RankEnum, rank) }}
+    </mat-option>
+  </mat-select>
+</mat-form-field>
 
-  <mat-form-field appearance="fill" class="form-field">
-    <mat-label>Duty Title</mat-label>
-    <mat-select formControlName="dutyTitle" required>
-      <mat-option *ngFor="let title of dutyTitles" [value]="title">
-        {{ title }}
-      </mat-option>
-    </mat-select>
-  </mat-form-field>
+<mat-form-field appearance="fill" class="form-field">
+  <mat-label>Duty Title</mat-label>
+  <mat-select formControlName="dutyTitle" required>
+    <mat-option *ngFor="let title of dutyTitles" [value]="title">
+      {{ getEnumName(DutyTitleEnum, title) }}
+    </mat-option>
+  </mat-select>
+</mat-form-field>
 
   <mat-form-field appearance="fill" class="form-field">
     <mat-label>Start Date</mat-label>
