@@ -11,6 +11,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { DutyDialog } from '../duty-dialog/duty-dialog';
 import { AstronautDutyService } from '../../services/astronaut-duty';
+import { MatCardModule } from '@angular/material/card';
 
 @Component({
   selector: 'person-table',
@@ -24,7 +25,8 @@ import { AstronautDutyService } from '../../services/astronaut-duty';
     MatInputModule,
     FormsModule,
     MatButtonModule,
-    MatIconModule
+    MatIconModule,
+    MatCardModule
   ],
   templateUrl: './person-table.html',
   styleUrls: ['./person-table.scss']
@@ -124,6 +126,7 @@ export class PersonTable implements OnInit, AfterViewInit {
           this.personService.getAllPeople().subscribe({
               next: (result: any) => {
                 this.dataSource.data = result.people;
+                this.newPersonName = "";
               },
               error: (err) => console.error('Error fetching people:', err)
             });
