@@ -101,7 +101,6 @@ export class PersonTable implements OnInit, AfterViewInit {
             // refresh table
             this.personService.getAllPeople().subscribe({
               next: (result: any) => {
-                console.log("new duty", result.newDuty);
                 this.dataSource.data = result.people;
               },
               error: (err) => console.error('Error fetching people:', err)

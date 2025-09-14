@@ -45,6 +45,22 @@ namespace StargateAPI.Business.Commands
 
                 throw new BadHttpRequestException($"A person with the name '{request.Name}' does not exist.");
             }
+            else
+            {
+                var verifyStartDate = await _context.AstronautDuties.AnyAsync(z => (z.Person != null && z.Person.Name == request.Name) && (z.DutyStartDate > request.DutyStartDate) && (z.DutyEndDate != null && z.DutyEndDate >= request.DutyStartDate));
+
+                if (verifyStartDate)
+                {
+                    var startDateMessage = $"The DutyStartDate '{request.DutyStartDate}' is invalid. It precedes the start or end date of another duty";
+
+                    _logger.LogWarning(startDateMessage);
+
+                    await _context.LogToDatabaseAsync(nameof(CreateAstronautDutyPreProcessor), LogLevel.Warning, startDateMessage);
+
+                    throw new BadHttpRequestException(startDateMessage);
+                }
+
+            }
 
             var verifyNoPreviousDuty = _context.AstronautDuties.FirstOrDefault(z => z.DutyTitleId == (int)request.DutyTitle && z.DutyStartDate == request.DutyStartDate);
             
