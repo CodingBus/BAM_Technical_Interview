@@ -9,14 +9,14 @@ export interface Person {
   success?: boolean;
 }
 
-export interface AstronautDuty {
-  name: string;
-  rankId: number;
-  rank: string;
-  dutyTitleId: number;
-  dutyTitle: string;
-  dutyStartDate: string;
-  dutyEndDate: string;
+export class AstronautDuty {
+  name!: string;
+  rankId!: number;
+  rank?: string;
+  dutyTitleId!: number;
+  dutyTitle?: string;
+  dutyStartDate!: string;
+  dutyEndDate?: string;
 }
 
 @Injectable({

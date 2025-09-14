@@ -78,7 +78,7 @@ export class PersonTable implements OnInit, AfterViewInit {
 
   openDutyDialog(person: Person){
     const dialogRef = this.dialog.open(DutyDialog, {
-      width: '400px',
+      // width: '400px',
       data: { person: person }
     });
 
