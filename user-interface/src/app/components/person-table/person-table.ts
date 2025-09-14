@@ -79,10 +79,20 @@ export class PersonTable implements OnInit, AfterViewInit {
   openDutyDialog(person: Person){
     const dialogRef = this.dialog.open(DutyDialog, {
       // width: '400px',
+      disableClose: true,
       data: { person: person }
     });
 
     dialogRef.afterClosed().subscribe(result => {
+      if (result == "save") {
+        console.log("refreshing table...");
+        this.personService.getAllPeople().subscribe({
+          next: (result: any) => {
+            this.dataSource.data = result.people;
+          },
+          error: (err) => console.error('Error fetching people:', err)
+        });
+      }
       console.log('Dialog closed with:', result);
     });
   }
