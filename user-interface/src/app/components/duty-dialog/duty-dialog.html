@@ -1,5 +1,6 @@
-<h3>Astronaut Duties for: {{ data.person.name }}</h3>
-<table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8">
+<span *ngIf="data.person?.astronautDuties?.length">
+    <h3>Astronaut Duties for: {{ data.person.name }}</h3>
+    <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8">
 
     <ng-container matColumnDef="rank">
         <th mat-header-cell *matHeaderCellDef mat-sort-header> Rank </th>
@@ -24,7 +25,41 @@
 
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
     <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-</table>
+    </table>    
+</span>
+
+<h3>Add New Astronaut Duty</h3>
+<form [formGroup]="dutyForm" (ngSubmit)="onAddDuty()">
+  <mat-form-field appearance="fill" class="form-field">
+    <mat-label>Rank</mat-label>
+    <mat-select formControlName="rank" required>
+      <mat-option *ngFor="let rank of ranks" [value]="rank">
+        {{ rank }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="fill" class="form-field">
+    <mat-label>Duty Title</mat-label>
+    <mat-select formControlName="dutyTitle" required>
+      <mat-option *ngFor="let title of dutyTitles" [value]="title">
+        {{ title }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="fill" class="form-field">
+    <mat-label>Start Date</mat-label>
+    <input matInput [matDatepicker]="picker" formControlName="dutyStartDate" required />
+    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+    <mat-datepicker #picker></mat-datepicker>
+  </mat-form-field>
+
+  <button mat-raised-button color="primary" type="submit" [disabled]="dutyForm.invalid">
+    Add Duty
+  </button>
+</form>
+
 <span>
     <button mat-icon-button (click)="onConfirm()">
         <mat-icon>check</mat-icon>

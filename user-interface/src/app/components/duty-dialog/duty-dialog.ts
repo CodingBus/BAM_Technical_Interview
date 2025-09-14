@@ -9,13 +9,19 @@ import { MatTableModule, MatTableDataSource } from '@angular/material/table';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatInputModule } from '@angular/material/input';
-import { FormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE, MAT_NATIVE_DATE_FORMATS, MatNativeDateModule, NativeDateAdapter } from '@angular/material/core';
+
 
 @Component({
   selector: 'app-duty-dialog',
+  standalone: true,
   imports: [
     CommonModule,
     FormsModule,
@@ -23,19 +29,41 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
     MatPaginatorModule,
     MatSortModule,
     MatInputModule,
-    FormsModule,
     MatButtonModule,
-    MatIconModule],
+    MatIconModule,
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatSelectModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    MatDialogModule    
+  ],
+  providers: [
+    { provide: MAT_DATE_LOCALE, useValue: 'en-US' },
+    { provide: DateAdapter, useClass: NativeDateAdapter },
+    { provide: MAT_DATE_FORMATS, useValue: MAT_NATIVE_DATE_FORMATS }
+  ],
   templateUrl: './duty-dialog.html',
   styleUrl: './duty-dialog.scss'
 })
 export class DutyDialog implements OnInit, AfterViewInit {
   displayedColumns = ['rank', 'dutyTitle', 'dutyStartDate', 'dutyEndDate'];
   dataSource = new MatTableDataSource<AstronautDuty>();
+  dutyForm!: FormGroup;
 
-  constructor(private dialogRef: MatDialogRef<DutyDialog>, @Inject(MAT_DIALOG_DATA) public data: { person: Person }) { }
+
+  ranks = ['Commander', 'Pilot', 'Engineer']; // placeholder
+  dutyTitles = ['Maintenance', 'Research', 'Navigation']; // placeholder
+
+  constructor(private fb: FormBuilder, private dialogRef: MatDialogRef<DutyDialog>, @Inject(MAT_DIALOG_DATA) public data: { person: Person }) { }
 
   ngOnInit(): void {
+    this.dutyForm = this.fb.group({
+      rank: ['', Validators.required],
+      dutyTitle: ['', Validators.required],
+      dutyStartDate: ['', Validators.required]
+    });
+
     console.log("dialog says:", this.mapPersonToDisplay(this.data.person));
     this.dataSource.data = this.mapPersonToDisplay(this.data.person);
   }
@@ -43,6 +71,18 @@ export class DutyDialog implements OnInit, AfterViewInit {
   ngAfterViewInit(): void {
 
   }
+
+  onAddDuty(): void {
+    if (this.dutyForm.valid) {
+      const newDuty = this.dutyForm.value;
+      console.log('Adding duty:', newDuty);
+
+      this.dataSource.data = [...this.dataSource.data, newDuty as AstronautDuty];
+
+      this.dutyForm.reset();
+    }
+  }
+
 
   onCancel(): void {
     this.dialogRef.close("cancel");
