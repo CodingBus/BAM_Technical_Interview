@@ -7,6 +7,7 @@ export interface Person {
   name: string;
   astronautDuties: AstronautDuty[],
   success?: boolean;
+  currentDutyTitle?: string;
 }
 
 export class AstronautDuty {

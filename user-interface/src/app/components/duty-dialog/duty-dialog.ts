@@ -77,13 +77,18 @@ export class DutyDialog implements OnInit {
       this.showDutiesTable = true;
     }
     this.dataSource.data = this.mapPersonToDisplay(this.data.person);
+
+    // hide duty form for retired astronauts
+    this.showDutyForm = this.data.person.currentDutyTitle != null && this.data.person.currentDutyTitle != "Retired";
   }
 
   onAddDuty(): void {
     if (this.dutyForm.valid) {
       const astronautDuty = new AstronautDuty();
       astronautDuty.name = this.data.person.name;
+      astronautDuty.rankId = this.dutyForm.value.rank;
       astronautDuty.rank = getEnumName(RankEnum, this.dutyForm.value.rank);
+      astronautDuty.dutyTitleId = this.dutyForm.value.dutyTitle;
       astronautDuty.dutyTitle = getEnumName(DutyTitleEnum, this.dutyForm.value.dutyTitle);
       astronautDuty.dutyStartDate = this.dutyForm.value.dutyStartDate;
 

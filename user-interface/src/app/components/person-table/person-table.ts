@@ -10,6 +10,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { DutyDialog } from '../duty-dialog/duty-dialog';
+import { AstronautDutyService } from '../../services/astronaut-duty';
 
 @Component({
   selector: 'person-table',
@@ -38,7 +39,7 @@ export class PersonTable implements OnInit, AfterViewInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  constructor(private personService: PersonService, private dialog: MatDialog) {}
+  constructor(private personService: PersonService, private dialog: MatDialog, private astronautDutyService: AstronautDutyService) {}
 
   ngOnInit() {
     this.personService.getAllPeople().subscribe({
@@ -89,14 +90,25 @@ export class PersonTable implements OnInit, AfterViewInit {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result.status == "save") {
-        console.log("refreshing table...");
-        this.personService.getAllPeople().subscribe({
+        //update duty
+        this.astronautDutyService.createAstronautDuty({
+          name: result.newDuty.name,
+          rank: result.newDuty.rankId,
+          dutyTitle: result.newDuty.dutyTitleId,
+          dutyStartDate: result.newDuty.dutyStartDate
+        }).subscribe({
           next: (result: any) => {
-            console.log("new duties", result.newDuty);
-            this.dataSource.data = result.people;
+            // refresh table
+            this.personService.getAllPeople().subscribe({
+              next: (result: any) => {
+                console.log("new duty", result.newDuty);
+                this.dataSource.data = result.people;
+              },
+              error: (err) => console.error('Error fetching people:', err)
+            });
           },
-          error: (err) => console.error('Error fetching people:', err)
-        });
+          error: (err) => console.error("Error creating astronaut duty:", err)
+        })
       }
       console.log('Dialog closed with:', result);
     });
