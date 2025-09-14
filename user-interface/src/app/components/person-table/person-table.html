@@ -3,24 +3,28 @@
   <ng-container matColumnDef="name">
     <th mat-header-cell *matHeaderCellDef mat-sort-header> Name </th>
     <td mat-cell *matCellDef="let person">
-        <!-- Display Mode -->
-        <span *ngIf="editingPersonId !== person.personId">
+      <!-- Display Mode -->
+      <span *ngIf="editingPersonId !== person.personId">
         {{ person.name ?? 'NA' }}
         <button mat-icon-button (click)="startEditing(person)">
-            <mat-icon>edit</mat-icon>
+          <mat-icon>edit</mat-icon>
         </button>
-        </span>
+      </span>
 
-        <!-- Edit Mode -->
-        <span *ngIf="editingPersonId === person.personId">
+      <!-- Edit Mode -->
+      <span *ngIf="editingPersonId === person.personId">
         <input [(ngModel)]="person.name" placeholder="Enter name" />
         <button mat-icon-button color="primary" (click)="saveName(person, person.name)">
-            <mat-icon>check</mat-icon>
+          <mat-icon>check</mat-icon>
         </button>
         <button mat-icon-button color="warn" (click)="cancelEdit(person)">
-            <mat-icon>close</mat-icon>
+          <mat-icon>close</mat-icon>
         </button>
-        </span>
+      </span>
+
+      <button mat-icon-button (click)="openDutyDialog(person)">
+        <mat-icon>ballot</mat-icon>
+      </button>
     </td>
   </ng-container>
 
@@ -36,15 +40,15 @@
 
   <ng-container matColumnDef="careerStartDate">
     <th mat-header-cell *matHeaderCellDef mat-sort-header> Career Start </th>
-    <td mat-cell *matCellDef="let person"> 
-      {{ person.careerStartDate ? (person.careerStartDate | date:'mediumDate') : 'NA' }} 
+    <td mat-cell *matCellDef="let person">
+      {{ person.careerStartDate ? (person.careerStartDate | date:'mediumDate') : 'NA' }}
     </td>
   </ng-container>
 
   <ng-container matColumnDef="careerEndDate">
     <th mat-header-cell *matHeaderCellDef mat-sort-header> Career End </th>
-    <td mat-cell *matCellDef="let person"> 
-      {{ person.careerEndDate ? (person.careerEndDate | date:'mediumDate') : 'NA' }} 
+    <td mat-cell *matCellDef="let person">
+      {{ person.careerEndDate ? (person.careerEndDate | date:'mediumDate') : 'NA' }}
     </td>
   </ng-container>
 

@@ -8,6 +8,8 @@ import { FormsModule } from '@angular/forms';
 import { PersonService, Person } from '../../services/person';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { DutyDialog } from '../duty-dialog/duty-dialog';
 
 @Component({
   selector: 'person-table',
@@ -36,7 +38,7 @@ export class PersonTable implements OnInit, AfterViewInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  constructor(private personService: PersonService) {}
+  constructor(private personService: PersonService, private dialog: MatDialog) {}
 
   ngOnInit() {
     this.personService.getAllPeople().subscribe({
@@ -72,5 +74,16 @@ export class PersonTable implements OnInit, AfterViewInit {
     person.name = this.editingPersonName!;
     this.editingPersonName = null;
     this.editingPersonId = null;
+  }
+
+  openDutyDialog(person: Person){
+    const dialogRef = this.dialog.open(DutyDialog, {
+      width: '400px',
+      data: { person: person }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('Dialog closed with:', result);
+    });
   }
 }
