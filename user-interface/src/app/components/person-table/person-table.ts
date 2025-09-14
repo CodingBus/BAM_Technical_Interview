@@ -31,6 +31,7 @@ export class PersonTable implements OnInit, AfterViewInit {
   dataSource = new MatTableDataSource<Person>();
 
   editingPersonId: number | null = null;
+  editingPersonName: string | null = null;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
@@ -52,16 +53,24 @@ export class PersonTable implements OnInit, AfterViewInit {
   }
 
   startEditing(person: Person) {
+    this.editingPersonName = person.name;
     this.editingPersonId = person.personId;
   }
 
   saveName(person: Person, newName: string) {
-    person.name = newName;
-    this.editingPersonId = null;
-    // TODO: call service
+    console.log(this.editingPersonName, newName);
+    this.personService.updatePerson(this.editingPersonName!, newName).subscribe({
+      next: (result: any) => {
+        person.name = newName;
+        this.editingPersonId = null;
+      },
+      error: (err) => console.error('Failed to update person:', err)
+    })
   }
 
-  cancelEdit() {
+  cancelEdit(person: Person) {
+    person.name = this.editingPersonName!;
+    this.editingPersonName = null;
     this.editingPersonId = null;
   }
 }
