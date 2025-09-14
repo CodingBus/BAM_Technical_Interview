@@ -30,13 +30,6 @@ namespace StargateAPI.Business.Queries
             {
                 throw new BadHttpRequestException($"No person found with name '{request.Name}'");
             }
-
-            var hasDuties = await _context.AstronautDuties.AsNoTracking().AnyAsync(d => d.Person!.Name == request.Name, cancellationToken);
-
-            if (!hasDuties)
-            {
-                throw new BadHttpRequestException($"'{request.Name}' has no astronaut duties");
-            }
         }
     }
 

@@ -57,3 +57,11 @@
 </table>
 
 <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+
+<div class="add-person-container" style="margin-top: 16px; display: flex; align-items: center; gap: 8px;">
+  <input [(ngModel)]="newPersonName" placeholder="Enter new person name" />
+  <button mat-raised-button color="primary" (click)="addPerson()">Add</button>
+  <span *ngIf="addPersonError" style="color: red; font-size: 12px;">
+    {{ addPersonError }}
+  </span>
+</div>

@@ -35,6 +35,8 @@ export class PersonTable implements OnInit, AfterViewInit {
 
   editingPersonId: number | null = null;
   editingPersonName: string | null = null;
+  newPersonName: string = "";
+  addPersonError: string | null = null;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
@@ -111,5 +113,30 @@ export class PersonTable implements OnInit, AfterViewInit {
       }
       console.log('Dialog closed with:', result);
     });
+  }
+
+  addPerson(){
+    //validate new person
+    if(this.newPersonName.trim() != ""){
+       this.addPersonError = null;
+      this.personService.createPerson(this.newPersonName.trim()).subscribe({
+        next: (result: any) => {
+          this.personService.getAllPeople().subscribe({
+              next: (result: any) => {
+                this.dataSource.data = result.people;
+              },
+              error: (err) => console.error('Error fetching people:', err)
+            });
+        },
+        error: (err) => {
+          console.error("Error adding person:", err);
+          this.addPersonError = "Error adding person: " + this.newPersonName.trim();
+        }
+      })
+    }
+    else {
+      console.log("cannot add blank name");
+      this.newPersonName = "";
+    }
   }
 }
