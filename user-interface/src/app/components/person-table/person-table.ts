@@ -66,7 +66,11 @@ export class PersonTable implements OnInit, AfterViewInit {
         person.name = newName;
         this.editingPersonId = null;
       },
-      error: (err) => console.error('Failed to update person:', err)
+      error: (err) =>{
+        person.name = this.editingPersonName!;
+        this.editingPersonName = null;
+        this.editingPersonId = null;
+      }
     })
   }
 

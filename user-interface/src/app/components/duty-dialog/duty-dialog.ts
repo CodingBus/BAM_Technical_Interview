@@ -56,6 +56,8 @@ export class DutyDialog implements OnInit {
   RankEnum = RankEnum;
   DutyTitleEnum = DutyTitleEnum;
 
+  showDutyForm = true;
+
 
   ranks = Object.values(RankEnum).filter(v => typeof v === 'number') as RankEnum[];
   dutyTitles = Object.values(DutyTitleEnum).filter(v => typeof v === 'number') as DutyTitleEnum[];
@@ -85,7 +87,9 @@ export class DutyDialog implements OnInit {
 
       this.astronautDuties.push(astronautDuty);
 
-      this.dutyForm.reset();
+      // this.dutyForm.reset();
+      // enforcing one new duty at a time for now
+      this.showDutyForm = false;
     }
   }
 
