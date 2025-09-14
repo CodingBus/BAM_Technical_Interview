@@ -6,6 +6,8 @@ import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatInputModule } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
 import { PersonService, Person } from '../../services/person';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'person-table',
@@ -16,7 +18,10 @@ import { PersonService, Person } from '../../services/person';
     MatTableModule,
     MatPaginatorModule,
     MatSortModule,
-    MatInputModule
+    MatInputModule,
+    FormsModule,
+    MatButtonModule,
+    MatIconModule
   ],
   templateUrl: './person-table.html',
   styleUrls: ['./person-table.scss']
@@ -24,6 +29,8 @@ import { PersonService, Person } from '../../services/person';
 export class PersonTable implements OnInit, AfterViewInit {
   displayedColumns = ['name', 'currentRank', 'currentDutyTitle', 'careerStartDate', 'careerEndDate'];
   dataSource = new MatTableDataSource<Person>();
+
+  editingPersonId: number | null = null;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
@@ -42,5 +49,19 @@ export class PersonTable implements OnInit, AfterViewInit {
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
+  }
+
+  startEditing(person: Person) {
+    this.editingPersonId = person.personId;
+  }
+
+  saveName(person: Person, newName: string) {
+    person.name = newName;
+    this.editingPersonId = null;
+    // TODO: call service
+  }
+
+  cancelEdit() {
+    this.editingPersonId = null;
   }
 }
