@@ -1,5 +1,5 @@
-<span *ngIf="data.person?.astronautDuties?.length">
-    <h3>Astronaut Duties for: {{ data.person.name }}</h3>
+<span *ngIf="showDutiesTable">
+    <h3>Astronaut Duties for {{ data.person.name }}</h3>
     <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8">
 
         <ng-container matColumnDef="rank">
@@ -28,7 +28,7 @@
 </span>
 
 <span *ngIf="showDutyForm">
-    <h3>Add New Astronaut Duty</h3>
+    <h3>Add New Astronaut Duty for {{ data.person.name }}</h3>
     <form [formGroup]="dutyForm" (ngSubmit)="onAddDuty()">
         <mat-form-field appearance="fill" class="form-field">
             <mat-label>Rank</mat-label>

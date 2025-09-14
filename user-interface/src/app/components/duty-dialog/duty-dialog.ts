@@ -47,7 +47,7 @@ import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE, MAT_NATIVE_DATE_FORMATS
   styleUrl: './duty-dialog.scss'
 })
 export class DutyDialog implements OnInit {
-  astronautDuties = new Array<AstronautDuty>();
+  newAstronautDuty!: AstronautDuty;
   displayedColumns = ['rank', 'dutyTitle', 'dutyStartDate', 'dutyEndDate'];
   dataSource = new MatTableDataSource<AstronautDuty>();
   dutyForm!: FormGroup;
@@ -57,6 +57,7 @@ export class DutyDialog implements OnInit {
   DutyTitleEnum = DutyTitleEnum;
 
   showDutyForm = true;
+  showDutiesTable = false;
 
 
   ranks = Object.values(RankEnum).filter(v => typeof v === 'number') as RankEnum[];
@@ -71,7 +72,10 @@ export class DutyDialog implements OnInit {
       dutyStartDate: ['', Validators.required]
     });
 
-    console.log("dialog says:", this.mapPersonToDisplay(this.data.person));
+    let duties = this.mapPersonToDisplay(this.data.person);
+    if(duties.length > 0) {
+      this.showDutiesTable = true;
+    }
     this.dataSource.data = this.mapPersonToDisplay(this.data.person);
   }
 
@@ -85,21 +89,22 @@ export class DutyDialog implements OnInit {
 
       this.dataSource.data = [...this.dataSource.data, astronautDuty];
 
-      this.astronautDuties.push(astronautDuty);
+      this.newAstronautDuty = astronautDuty;
 
       // this.dutyForm.reset();
       // enforcing one new duty at a time for now
       this.showDutyForm = false;
+      this.showDutiesTable = true;
     }
   }
 
 
   onCancel(): void {
-    this.dialogRef.close({status: "cancel", newDuties: []});
+    this.dialogRef.close({status: "cancel"});
   }
 
   onConfirm(): void {
-    this.dialogRef.close({status: "save", newDuties: this.astronautDuties});
+    this.dialogRef.close({status: "save", newDuty: this.newAstronautDuty});
   }
 
   mapPersonToDisplay(person: Person): AstronautDuty[] {
