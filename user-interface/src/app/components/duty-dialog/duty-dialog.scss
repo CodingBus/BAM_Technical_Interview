@@ -1,0 +1,39 @@
+:host {
+  display: block;
+  padding: 24px;          // more breathing room
+}
+
+.mat-dialog-container {
+  padding: 24px !important;
+  max-width: 95vw !important;
+  width: 800px !important; // or auto/whatever feels right
+}
+
+h3 {
+  margin-bottom: 16px;
+}
+
+table {
+  margin-bottom: 24px;
+}
+
+.form-field {
+  display: block;
+  width: 100%;
+  margin-bottom: 16px;
+}
+
+button {
+  margin-right: 8px;
+}
+
+.dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 16px;
+  gap: 12px;
+
+  button mat-icon {
+    margin-right: 6px;
+  }
+}

@@ -86,7 +86,7 @@
   ></mat-paginator>
 
   <div class="add-person-container">
-    <input [(ngModel)]="newPersonName" placeholder="Enter new person name" />
+    <input [(ngModel)]="newPersonName" placeholder="New Person" />
     <button mat-raised-button color="primary" (click)="addPerson()">Add</button>
     <span *ngIf="addPersonError" class="error-text">
       {{ addPersonError }}
