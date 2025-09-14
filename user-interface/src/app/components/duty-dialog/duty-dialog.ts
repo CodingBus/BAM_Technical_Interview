@@ -17,6 +17,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE, MAT_NATIVE_DATE_FORMATS, MatNativeDateModule, NativeDateAdapter } from '@angular/material/core';
+import { AbstractControl, ValidationErrors } from '@angular/forms';
 
 
 @Component({
@@ -36,7 +37,7 @@ import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE, MAT_NATIVE_DATE_FORMATS
     MatSelectModule,
     MatDatepickerModule,
     MatNativeDateModule,
-    MatDialogModule    
+    MatDialogModule
   ],
   providers: [
     { provide: MAT_DATE_LOCALE, useValue: 'en-US' },
@@ -67,13 +68,13 @@ export class DutyDialog implements OnInit {
 
   ngOnInit(): void {
     this.dutyForm = this.fb.group({
-      rank: [ RankEnum, Validators.required],
+      rank: [RankEnum, Validators.required],
       dutyTitle: [DutyTitleEnum, Validators.required],
-      dutyStartDate: ['', Validators.required]
+      dutyStartDate: ['', [Validators.required, this.validateStartDate.bind(this)]]
     });
 
     let duties = this.mapPersonToDisplay(this.data.person);
-    if(duties.length > 0) {
+    if (duties.length > 0) {
       this.showDutiesTable = true;
     }
     this.dataSource.data = this.mapPersonToDisplay(this.data.person);
@@ -105,11 +106,11 @@ export class DutyDialog implements OnInit {
 
 
   onCancel(): void {
-    this.dialogRef.close({status: "cancel"});
+    this.dialogRef.close({ status: "cancel" });
   }
 
   onConfirm(): void {
-    this.dialogRef.close({status: "save", newDuty: this.newAstronautDuty});
+    this.dialogRef.close({ status: "save", newDuty: this.newAstronautDuty });
   }
 
   mapPersonToDisplay(person: Person): AstronautDuty[] {
@@ -129,4 +130,19 @@ export class DutyDialog implements OnInit {
     return duty_list;
   }
 
+  validateStartDate(control: AbstractControl): ValidationErrors | null {
+    const newDate: Date = control.value;
+    if (!newDate) return null;
+
+    const existingDuties = this.dataSource.data;
+
+    const isBeforeAny = existingDuties.some(d => {
+      const startDate = new Date(d.dutyStartDate);
+      const endDate = d.dutyEndDate ? new Date(d.dutyEndDate) : null;
+
+      return newDate <= startDate || (endDate && newDate <= endDate);
+    });
+
+    return isBeforeAny ? { dateTooEarly: true } : null;
+  }
 }

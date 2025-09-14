@@ -53,6 +53,7 @@
             <input matInput [matDatepicker]="picker" formControlName="dutyStartDate" required />
             <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
             <mat-datepicker #picker></mat-datepicker>
+            <mat-error *ngIf="dutyForm.get('dutyStartDate')?.hasError('dateTooEarly')">Start date must succeed existing career dates</mat-error>
         </mat-form-field>
 
         <button mat-raised-button color="primary" type="submit" [disabled]="dutyForm.invalid">
