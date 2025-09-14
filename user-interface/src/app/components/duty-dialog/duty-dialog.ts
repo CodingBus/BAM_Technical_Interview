@@ -46,7 +46,7 @@ import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE, MAT_NATIVE_DATE_FORMATS
   templateUrl: './duty-dialog.html',
   styleUrl: './duty-dialog.scss'
 })
-export class DutyDialog implements OnInit, AfterViewInit {
+export class DutyDialog implements OnInit {
   astronautDuties = new Array<AstronautDuty>();
   displayedColumns = ['rank', 'dutyTitle', 'dutyStartDate', 'dutyEndDate'];
   dataSource = new MatTableDataSource<AstronautDuty>();
@@ -71,10 +71,6 @@ export class DutyDialog implements OnInit, AfterViewInit {
 
     console.log("dialog says:", this.mapPersonToDisplay(this.data.person));
     this.dataSource.data = this.mapPersonToDisplay(this.data.person);
-  }
-
-  ngAfterViewInit(): void {
-
   }
 
   onAddDuty(): void {
