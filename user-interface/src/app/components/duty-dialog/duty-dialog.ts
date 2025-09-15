@@ -59,6 +59,7 @@ export class DutyDialog implements OnInit {
 
   showDutyForm = true;
   showDutiesTable = false;
+  showSaveButton = false;
 
 
   ranks = Object.values(RankEnum).filter(v => typeof v === 'number') as RankEnum[];
@@ -100,6 +101,7 @@ export class DutyDialog implements OnInit {
       // this.dutyForm.reset();
       // enforcing one new duty at a time for now
       this.showDutyForm = false;
+      this.showSaveButton = true;
       this.showDutiesTable = true;
     }
   }
